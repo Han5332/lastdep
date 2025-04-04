@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <style>
+        body {
+            background-color: #F8F8F8;
+            color: black;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .signup-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .signup-container h2 {
+            margin-bottom: 20px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            background-color: black;
+            color: white;
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: gray;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h2>Signup</h2>
+        <!-- <input type="text" id="name" class="input-field" placeholder="Username" required> -->
+        <input type="email" id="email" class="input-field" placeholder="Email" required>
+        <input type="password" id="password" class="input-field" placeholder="Password" required>
+        <button class="btn" onclick="signup()">Signup</button>
+        <p class="error-message" id="error-message"></p>
+    </div>
+    <script>
+        async function signup() {
+            // const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const error = document.getElementById("error-message");
+
+            const response = await fetch("http://localhost:5000/mongoose", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert(data.message);
+                window.location.href = "shopspage.html"; // Redirect to login page
+            } else {
+                error.textContent = data.message;
+            }
+        }
+    </script>
+</body>
+</html>
