@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAST DEPARTURE - SHOP</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Bebas+Neue&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <header id="header">
+        <h1><a href="mainpage.html" style="text-decoration: none; color: inherit;">LAST DEPARTURE</a></h1>
+        <nav>
+            <ul>
+                <li><a href="shopspage.html" style="text-decoration: none;"><button>SHOP</button></a></li>
+                <li><a href="loginpage.html" style="text-decoration: none;"><button>LOGIN</button></a></li>
+                <li><button onclick="window.location.href='cart.html'">CART (<span id="cart-count">0</span>)</button></li>
+
+            </ul>
+        </nav>
+    </header>
+    <section id="shop">
+        <h2>Shop Our Collection</h2>
+        <div class="product-list" id="product-list">
+            <!-- Products will be dynamically injected here -->
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 LAST DEPARTURE</p>
+    </footer>
+
+    <script>
+
+        const products = [
+            {
+                id: 1,
+                title: "Premium Black Hoodie",
+                price: "$39.99",
+                imgSrc: "img/product1.jpg",
+                alt: "Premium Black Hoodie",
+                productPage: "product1.html" // Link to the specific product page
+            },
+            {
+                id: 2,
+                title: "Classic White T-Shirt",
+                price: "$19.99",
+                imgSrc: "img/product2.jpg",
+                alt: "Classic White T-Shirt",
+                productPage: "product2.html" // Link to the specific product page
+            },
+            {
+                id: 3,
+                title: "Stylish Blue Jeans",
+                price: "$49.99",
+                imgSrc: "img/product3.jpg",
+                alt: "Stylish Blue Jeans",
+                productPage: "product3.html" // Link to the specific product page
+            },
+            {
+                id: 4,
+                title: "Comfy Grey Sweatpants",
+                price: "$29.99",
+                imgSrc: "img/product4.jpg",
+                alt: "Comfy Grey Sweatpants",
+                productPage: "product4.html" // Link to the specific product page
+            }
+        ];
+
+        const productList = document.getElementById('product-list');
+
+        // Function to generate HTML for each product
+        function createProductCard(product) {
+            const productDiv = document.createElement('div');
+            productDiv.classList.add('product');
+
+            // Create a link element wrapping the product card
+            const productLink = document.createElement('a');
+            productLink.href = product.productPage; // Product page link
+            productLink.style.textDecoration = 'none'; // Remove underline from link
+
+            // Append product information inside the link
+            productLink.innerHTML = `
+                <img src="${product.imgSrc}" alt="${product.alt}">
+                <h3>${product.title}</h3>
+                <div class="price">${product.price}</div>
+            `;
+
+            productDiv.appendChild(productLink);
+            return productDiv;
+        }
+
+        // Populate the product list dynamically
+        products.forEach(product => {
+            const productCard = createProductCard(product);
+            productList.appendChild(productCard);
+        });
+    </script>
+</body>
+</html>

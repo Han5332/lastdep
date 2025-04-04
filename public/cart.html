@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <style>
+        body {
+            background-color: #F8F8F8;
+            color: black;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+      
+        #cart-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            text-align: center;
+            margin-top: 20px;
+        }
+        #cart-items {
+            margin: 20px 0;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #EFEFEF;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: gray;
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <h1><a href="mainpage.html" style="text-decoration: none; color: inherit;">LAST DEPARTURE</a></h1>
+        <nav>
+            <ul>
+                <li><a href="shopspage.html" style="text-decoration: none;"><button>SHOP</button></a></li>
+                <li><button onclick="navigateTo('about')">ABOUT</button></li>
+                <li><button onclick="navigateTo('contact')">CONTACT</button></li>
+                <li><a href="loginpage.html" style="text-decoration: none;"><button>LOGIN</button></a></li>
+                <li><button onclick="window.location.href='cart.html'">CART (<span id="cart-count">0</span>)</button></li>
+                
+
+            </ul>
+        </nav>
+    </header>
+
+    <section id="cart-container">
+        <h2>Your Cart</h2>
+        <div id="cart-items"></div>
+        <button onclick="checkout()">Checkout</button>
+    </section>
+
+    <script>
+        async function fetchCart() {
+            const token = localStorage.getItem("token");
+            const userId = localStorage.getItem("userId");
+
+            if (!token || !userId) {
+                document.getElementById("cart-items").innerHTML = "<p>Please log in to view your cart.</p>";
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/cart${userId}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const cart = await response.json();
+                displayCart(cart);
+            } catch (error) {
+                console.error("Error fetching cart:", error);
+            }
+        }
+
+        function displayCart(cart) {
+            const cartContainer = document.getElementById("cart-items");
+            cartContainer.innerHTML = "";
+            
+            if (cart.items.length === 0) {
+                cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+                return;
+            }
+
+            cart.items.forEach((item) => {
+                const itemElement = document.createElement("div");
+                itemElement.classList.add("cart-item");
+                itemElement.innerHTML = `
+                    <p>${item.product.name} - ${item.quantity} x $${item.product.price}</p>
+                    <button onclick="removeFromCart('${item.product._id}')">Remove</button>
+                `;
+                cartContainer.appendChild(itemElement);
+            });
+        }
+
+        async function removeFromCart(productId) {
+            const token = localStorage.getItem("token");
+            const userId = localStorage.getItem("userId");
+
+            if (!token || !userId) {
+                alert("Please log in.");
+                return;
+            }
+
+            try {
+                await fetch("http://localhost:5000/cart/remove", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ userId, productId }),
+                });
+
+                alert("Item removed from cart!");
+                fetchCart();
+            } catch (error) {
+                console.error("Error removing item:", error);
+            }
+        }
+
+        async function checkout() {
+            alert("Checkout functionality will be implemented soon!");
+        }
+
+        document.addEventListener("DOMContentLoaded", fetchCart);
+    </script>
+</body>
+</html>
