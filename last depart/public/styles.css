@@ -1,0 +1,463 @@
+/* ============ GLOBAL STYLES ============ */
+body {
+    background-color: #F2F0EF;
+    color: white;
+    font-family: Montserrat, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* ============ HEADER ============ */
+header {
+    background-color: #F2F0EF;
+    padding: 15px;
+    padding-left: 20px;
+    position: fixed;
+    top: 0; /* Make it visible from the beginning */
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    transition: top 0.3s ease-in-out; /* Smooth transition for the dropdown effect */
+}
+
+
+.scrolled header {
+    top: 0; /* Slide into view when scrolled */
+}
+
+
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+nav {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 25px; /* Move buttons a few pixels to the left */
+
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+nav ul li {
+    margin: 0;
+}
+
+nav ul li button {
+    background: none;
+    border: none;
+    color: black;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+nav ul li button:hover {
+    text-decoration: underline;
+}
+
+/* Hamburger icon hidden by default */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: black;
+    z-index: 1001;
+}
+
+/* Small screen styling */
+@media (max-width: 768px) {
+    header {
+        flex-wrap: nowrap;
+        padding: 10px 20px;
+    }
+
+    .menu-toggle {
+        display: block;
+        position: absolute;
+        top: 5px;
+        right: 50px;
+    }
+
+    nav {
+        position: absolute;
+        top: 50px;
+        left: 0;
+        width: 100%; /* Ensure it matches the screen width */
+        background-color: rgba(0, 0, 0, 0.8); /* Black translucent background */
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        margin: 0;
+        padding: 10px 0;
+        display: none;
+    }
+
+    nav ul li {
+        margin: 10px 20px;
+    }
+
+    nav ul li button {
+        font-size: 16px;
+        background: none;
+        border: none;
+        padding: 8px 0;
+        text-align: left; /* Align text to the left */
+        width: 100%;
+        color: white;
+    }
+
+    /* When menu is active */
+    nav ul.show {
+        display: flex;
+        animation: dropdown 0.3s ease-in-out;
+    }
+
+    @keyframes dropdown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+
+
+/* ============ HOME SECTION ============ */
+#home {
+    background: url(img/masaaki-komori-9ugEeqflo70-unsplash.jpg) no-repeat center center/cover;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0 15px;
+}
+
+#home::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#home h2, #home p, #home .btn {
+    position: relative;
+    z-index: 1;
+}
+
+#home h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.btn {
+    background-color: white;
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+    background-color: gray;
+    transform: translateY(-1px);
+}
+
+/* ============ ABOUT SECTION ============ */
+#about {
+    background-color: #F2F0EF;
+    color: #333;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 20px;
+    margin-top: 30px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#about .text, #about .image {
+    flex: 1 1 300px;
+    max-width: 600px;
+    padding: 20px;
+}
+
+#about .text {
+    text-align: left;
+}
+
+#about .text h2 {
+    font-size: 2.2rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+#about .text p {
+    font-size: 18px;
+    color: #555;
+    line-height: 1.6;
+}
+
+#about .image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* ============ CONTACT SECTION ============ */
+#contact {
+    background-color: #F2F0EF;
+    color: #333;
+    padding: 50px 20px;
+    margin-top: 30px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 100%; /* Ensure it doesn't exceed the full page width */
+    margin-left: 0;
+    margin-right: 0;
+    box-sizing: border-box;
+}
+
+#contact .columnbig {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
+
+#contact .column {
+    flex: 1 1 300px;
+    max-width: 350px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#contact .column h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#contact .column p {
+    font-size: 18px;
+    color: #555;
+    line-height: 1.6;
+    text-align: center;
+}
+
+#contact a {
+    color: #545d68;
+    text-decoration: none;
+}
+
+#contact a:hover {
+    text-decoration: underline;
+}
+
+/* ============ MEDIA QUERIES ============ */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 20px;
+    }
+
+    nav {
+        width: 100%;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    nav ul li {
+        margin: 5px 0;
+    }
+
+    #home h2 {
+        font-size: 2rem;
+    }
+
+    #about .text, #about .image {
+        max-width: 100%;
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 10px 18px;
+        width: 100%;
+    }
+
+    #contact .column {
+        max-width: 100%;
+        padding: 15px;
+    }
+
+    #contact .columnbig {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 20px;
+    }
+
+    #home h2 {
+        font-size: 1.5rem;
+    }
+
+    .btn {
+        font-size: 0.9rem;
+    }
+
+    #about .text h2 {
+        font-size: 1.8rem;
+    }
+
+    #contact .column p {
+        font-size: 16px;
+    }
+}
+
+
+/* THIS IS FOR THE SHOPSPAGE */
+body {
+    font-family: Montserrat, sans-serif;
+    background-color: #f8f8f8;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure the body takes up at least the full height of the screen */
+}
+
+#shop {
+    color: #444;
+    padding: 80px 20px;
+    text-align: center;
+    flex: 1; /* Allows #shop to grow and take remaining space */
+}
+
+h2 {
+    font-size: 36px;
+    margin-bottom: 30px;
+}
+
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    justify-content: center;
+}
+
+.product {
+    background-color: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    border: 2px solid #ccc;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.product:hover {
+    transform: scale(1.05);
+}
+
+.product img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.product .price {
+    font-size: 18px;
+    color: #333;
+    margin-top: 10px;
+}
+
+footer {
+    background-color: #222;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Media queries for responsive design */
+@media (min-width: 1024px) {
+    .product-list {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .product-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Bebas+Neue&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #F8F8F8;
+            color: #000000;
+            font-family: Montserrat, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #cart-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #cart-items {
+            margin: 20px 0;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #EFEFEF;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: gray;
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <h1><a href="mainpage.html" style="text-decoration: none; color: inherit;">LAST DEPARTURE</a></h1>
+        <nav>
+            <ul>
+                <li><a href="shopspage.html" style="text-decoration: none;"><button>SHOP</button></a></li>
+                <li><button onclick="navigateTo('about')">ABOUT</button></li>
+                <li><button onclick="navigateTo('contact')">CONTACT</button></li>
+                <li><a href="loginpage.html" style="text-decoration: none;"><button>LOGIN</button></a></li>
+                <li><button onclick="window.location.href='cart.html'">CART (<span id="cart-count">0</span>)</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="cart-container">
+        <h2>Your Cart</h2>
+        <div id="cart-items"></div>
+        <button onclick="checkout()">Checkout</button>
+    </section>
+
+    <script>
+        function navigateTo(section) {
+          window.location.href = section + ".html";
+        }
+    
+        async function fetchCart() {
+          const userId = localStorage.getItem("userId");
+          if (!userId) return;
+    
+          try {
+            const res = await fetch(`/api/cart?userId=${userId}`);
+            const cart = await res.json();
+            displayCart(cart);
+            console.log("cart:", cart);   
+
+          } catch (err) {
+            console.error("Failed to fetch cart:", err);
+          }
+          console.log("userId:", userId);
+        
+        }
+    
+        function displayCart(cart) {
+            const cartContainer = document.getElementById("cart-items");
+            cartContainer.innerHTML = "";
+
+            if (!cart.items || cart.items.length === 0) {
+                cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+                return;
+            }
+
+            cart.items.forEach((item, index) => {
+                const product = item.product || item.productId; // FIX: use productId if product is undefined
+
+                if (
+                !product ||
+                typeof product !== "object" ||
+                !product._id ||
+                !product.name ||
+                typeof product.price !== "number"
+                ) {
+                console.error(
+                    `Skipping invalid item at index ${index}:`,
+                    item
+                );
+                return;
+                }
+
+                const itemElement = document.createElement("div");
+                itemElement.classList.add("cart-item");
+
+                itemElement.innerHTML = `
+                <div style="text-align: left;">
+                    <p><strong>${product.name}</strong></p>
+                    <p>Quantity: ${item.quantity}</p>
+                    <p>Price: $${product.price.toFixed(2)}</p>
+                    ${
+                    product.image
+                        ? `<img src="${product.image}" alt="${product.name}" style="width: 80px; border-radius: 5px;">`
+                        : ""
+                    }
+                </div>
+                <button onclick="removeFromCart('${product._id}')">Remove</button>
+                `;
+
+                cartContainer.appendChild(itemElement);
+            });
+
+            // Update cart count using only valid items
+            const cartCount = document.getElementById("cart-count");
+            cartCount.textContent = cart.items.reduce((total, item) => {
+                const prod = item.product || item.productId;
+                return prod && prod._id ? total + item.quantity : total;
+            }, 0);
+            }
+
+
+         
+        async function removeFromCart(productId) {
+          const userId = localStorage.getItem("userId");
+          const token = localStorage.getItem("token");
+    
+          if (!userId || !token) {
+            alert("Please log in.");
+            return;
+          }
+    
+          try {
+            await fetch("/api/cartremove", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ userId, productId }),
+            });
+    
+            alert("Item removed from cart!");
+            fetchCart();
+          } catch (error) {
+            console.error("Error removing item:", error);
+          }
+        }
+    
+        async function checkout() {
+          alert("Checkout functionality will be implemented soon!");
+        }
+    
+        async function addToCart(productId, product) {
+          const userId = localStorage.getItem("userId");
+          if (!userId || !productId || !product) {
+            alert("Please log in and ensure the product is valid before adding to your cart.");
+            return;
+          }
+    
+          try {
+            const response = await fetch("/api/cart", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ userId, productId, quantity: 1 }),
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+              alert("Item added to cart!");
+              fetchCart();
+            } else {
+              alert("Failed to add: " + data.message);
+            }
+          } catch (err) {
+            console.error("Error adding to cart:", err);
+          }
+        }
+    
+        document.addEventListener("DOMContentLoaded", fetchCart);
+      </script>
+</body>
+</html>
