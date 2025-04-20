@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product - LAST DEPARTURE</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Bebas+Neue&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ——— YOUR EXACT CSS KEPT ——— */
+        body {
+            background-color: #F8F8F8;
+            color: black;
+            font-family: Montserrat, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .product-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            background: white;
+            padding: 60px;
+            position: relative;
+            box-sizing: border-box;
+        }
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 28px;
+        }
+        .back-btn:hover { color: gray; }
+        .product-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #EFEFEF;
+            padding: 40px;
+            border-radius: 15px;
+        }
+        .product-image img {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+        .product-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            text-align: left;
+        }
+        .product-title {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .product-price {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .product-description {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #555;
+        }
+        .payment-options {
+            margin-top: 20px;
+        }
+        .payment-options img {
+            width: 50px;
+            margin-right: 10px;
+        }
+        .btn {
+            background-color: black;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            align-self: start;
+            margin-bottom: 15px;
+        }
+        .btn:hover { background-color: gray; }
+        .cart-link {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 18px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            background: #ddd;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+    </style>
+
+    <script>
+        let currentProductId = null;
+        let currentProduct = null;
+    
+        document.addEventListener("DOMContentLoaded", () => {
+            const params = new URLSearchParams(window.location.search);
+            currentProductId = params.get("id");
+            // console.log("Current Product ID:", currentProductId);
+            if (!currentProductId) {
+                alert("No product ID in URL.");
+                return;
+            }
+            productId = currentProductId;
+            fetchProductDetails(currentProductId);
+        });
+        
+        console.log("userId:", localStorage.getItem("userId"));
+
+        async function fetchProductDetails(productId) {
+            try {
+                // console.log("productId:", currentProductId);
+
+                const res = await fetch(`/api/products/${productId}`);
+                const product = await res.json();
+
+                // Check if product is valid
+                if (!product || !product.price) {
+                    console.error("Product details are incomplete or unavailable:", product);
+                    alert("Product details are incomplete or unavailable.");
+                    return;
+                }
+
+                // Fill in HTML with fetched product data
+                document.getElementById("product-title").textContent = product.name || "Product Name Unavailable";
+                document.getElementById("product-price").textContent = product.price || "Price not available";
+                document.getElementById("product-description").textContent = product.description || "Description not available";
+
+                if (product.image) {
+                    document.getElementById("product-image").src = product.image;
+                } else {
+                    document.getElementById("product-image").src = "img/placeholder.jpg"; // Default image
+                }
+
+                currentProduct = product; // Store the product data for later use in addToCart()
+
+            } catch (err) {
+                console.error("Error loading product:", err);
+                alert("Failed to load product.");
+            }
+        }
+
+        async function addToCart() {
+            const userId = localStorage.getItem("userId");
+            if (!userId || !currentProductId || !currentProduct) {
+                alert("Please log in and ensure the product is valid before adding it to your cart.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/cart", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        userId: userId,
+                        productId: currentProductId,
+                        quantity: 1
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert("Item added to cart!");
+                    console.log(data);
+                } else {
+                    alert("Failed to add: " + data.message);
+                }
+            } catch (err) {
+                console.error("Error adding to cart:", err);
+            }
+        }
+
+        async function fetchCart() {
+            const userId = localStorage.getItem("userId");
+            if (!userId) return;
+
+            try {
+                const res = await fetch(`/api/cart?userId=${userId}`);
+                const cart = await res.json();
+                console.log("Cart contents:", cart);
+            } catch (err) {
+                console.error("Failed to fetch cart:", err);
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</head>
+
+<body>
+    <div class="product-container">
+        <button class="back-btn" onclick="goBack()">&#8592;</button>
+        <a href="cart.html" class="cart-link">View Cart</a>
+
+        <div class="product-image">
+            <img id="product-image" src="img/product1.jpg" alt="Product Image">
+        </div>
+
+        <div class="product-info">
+            <div class="product-title" id="product-title">Loading...</div>
+            <div class="product-price" id="product-price"></div>
+            <div class="product-description" id="product-description"></div>
+
+            <button class="btn" onclick="addToCart()">Add to Cart</button>
+            <button class="btn" onclick="fetchCart()">View Cart</button>
+
+            <div class="payment-options">
+                <span>Payment Options:</span>
+                <img src="img/visa.png" alt="Visa">
+                <img src="img/mastercard.png" alt="MasterCard">
+                <img src="img/paypal.png" alt="PayPal">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
